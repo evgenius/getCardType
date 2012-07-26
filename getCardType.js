@@ -3,6 +3,7 @@ function getCardType(cc_number, options) {
 
 	options.treatDciAsMc = options.treatDciAsMc == undefined ? true : !!options.treatDciAsMc;
 	options.treatAmericanDcAsMc = options.treatAmericanDcAsMc == undefined ? true : !!options.treatAmericanDcAsMc;
+	options.treatElectronAsVisa = options.treatElectronAsVisa == undefined ? true : !!options.treatElectronAsVisa;
 	options.useInactiveSystems = options.useInactiveSystems == undefined ? true : !!options.useInactiveSystems;
 
 	var patterns = {
