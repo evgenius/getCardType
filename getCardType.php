@@ -1,0 +1,48 @@
+<?php
+
+function getCardType($ccNumber, $options=array())
+{
+    $options['treatDciAsMc'] = isset($options['treatDciAsMc']) ? !!$options['treatDciAsMc'] : true;
+    $options['treatAmericanDcAsMc'] = isset($options['treatAmericanDcAsMc']) ? !!$options['treatAmericanDcAsMc'] : true;
+    $options['treatElectronAsVisa'] = isset($options['treatElectronAsVisa']) ? !!$options['treatElectronAsVisa'] : true;
+    $options['useInactiveSystems'] = isset($options['useInactiveSystems']) ? !!$options['useInactiveSystems'] : true;
+
+    $patterns = array(
+        'Amex' => '/^3[47]/',
+        'Bankcard' => '/^56(?:10|022[1-5])/',
+        'UnionPay' => '/^62/',
+        'DinersClub' => '/^(?:30[0-5]|36|5[45])/',
+        'Discover' => '/^6(?:011|22(?:1(?:2[6-9]|[3-9])|[2-8]|9(?:[01]|2[0-5]))|4[4-9]|5)/',
+        'InstaPayment' => '/^63[7-9]/',
+        'JCB' => '/^35(?:(?:2[89])|[3-8])/',
+        'Laser' => '/^(?:6304|6706|6771|6709)/',
+        'Maestro' => '/^(?:5018|5020|5038|6304|6759|676[1-3]|0604)/',
+        'MasterCard' => '/^5[1-5]/',
+        'Solo' => '/^(?:6334|6767)/',
+        'Switch' => '/^(?:49(?:03|05|11|36)|564182|633110|6333|6759)/',
+        'VisaElectron' => '/^(?:4026|417500|4508|4844|491(?:3|7))/',
+        'Visa' => '/^4/');
+
+    if (!$options['treatDciAsMc']) {
+        // By default treat DinersClub International as MasterCard
+        $patterns['DinersClub'] = '/^(?:30[0-5]|2014|2149|36)/';
+    }
+
+    if ($options['treatElectronAsVisa']) {
+        unset($patterns['VisaElectron']);
+    }
+
+    if (!$options['useInactiveSystems']) {
+        unset($patterns['Bankcard']);
+        unset($patterns['Solo']);
+        unset($patterns['Switch']);
+    }
+
+    foreach ($patterns as $cardType=>$pattern) {
+    	if (preg_match($pattern, $ccNumber)) {
+            return $cardType;
+        }
+    }
+
+    return 'Unknown';
+}
